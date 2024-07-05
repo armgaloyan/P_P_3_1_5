@@ -8,6 +8,8 @@
 <p>Id: <span th:text="${user.getId()}">VALUE</span></p>
 <p>Username: <span th:text="${user.getUsername()}">VALUE</span></p>
 <p>Age: <span th:text="${user.getAge()}">VALUE</span></p>
+<p>Role: <span th:text="${user.getRoles()}">VALUE</span></p>
+
 
 <a th:href="@{/admin/edit(id=${user.getId()})}">Update user</a>
 

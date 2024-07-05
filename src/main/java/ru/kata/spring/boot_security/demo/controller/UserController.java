@@ -4,23 +4,28 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ru.kata.spring.boot_security.demo.entities.Role;
 import ru.kata.spring.boot_security.demo.entities.User;
+import ru.kata.spring.boot_security.demo.services.UserDetailsServiceImpl;
 import ru.kata.spring.boot_security.demo.services.UserService;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/users")
 public class UserController {
-    private final UserService userService;
+    private final UserDetailsServiceImpl userDetailsService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(UserDetailsServiceImpl userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
+
     @GetMapping("/show")
     public String show(Model model, Principal principal) {
-        User user = (User) userService.loadUserByUsername(principal.getName());
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
         model.addAttribute("user", user);
+        model.addAttribute("roles", user.getRoles());
         return "showForUser";
     }
 }
