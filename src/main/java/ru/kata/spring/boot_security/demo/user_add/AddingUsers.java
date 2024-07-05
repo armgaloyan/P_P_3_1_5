@@ -5,14 +5,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.entities.Role;
 import ru.kata.spring.boot_security.demo.entities.User;
-import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-
 @Component
 public class AddingUsers {
     private final UserRepository userRepository;
