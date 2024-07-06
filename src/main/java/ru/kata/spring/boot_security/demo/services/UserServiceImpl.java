@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void save(User user) {
         Optional<User> userFromDB = Optional.ofNullable(userRepository.findByUsername(user.getUsername()));
-        if (!userFromDB.isEmpty()) {
+        if (userFromDB.isPresent()) {
             return;
         }
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -44,10 +44,8 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             return;
         }
-        user.setRoles(updatedUser.getRoles());
-        user.setUsername(updatedUser.getUsername());
-        user.setAge(updatedUser.getAge());
-        userRepository.save(user);
+        updatedUser.setPassword(bCryptPasswordEncoder.encode(updatedUser.getPassword()));
+        userRepository.save(updatedUser);
     }
     @Transactional
     public void deleteUser(Long id) {

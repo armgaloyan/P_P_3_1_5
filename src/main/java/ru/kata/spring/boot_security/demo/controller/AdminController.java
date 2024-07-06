@@ -8,14 +8,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.kata.spring.boot_security.demo.entities.Role;
 import ru.kata.spring.boot_security.demo.entities.User;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.services.UserService;
 
 import javax.validation.Valid;
-import java.util.HashSet;
-import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
@@ -46,17 +43,10 @@ public class AdminController {
     }
     @PostMapping
     public String create(@ModelAttribute("user") @Valid User user,
-                         @RequestParam(value = "roles", required = false) List<Long> roleIds,
                          BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "new";
         }
-
-        if (roleIds != null && !roleIds.isEmpty()) {
-            List<Role> roles = roleRepository.findAllById(roleIds);
-            user.setRoles(new HashSet<>(roles));
-        }
-
         userService.save(user);
         return "redirect:/admin";
     }
@@ -69,16 +59,9 @@ public class AdminController {
     @PostMapping("/update")
     public String update(@ModelAttribute("user") @Valid User user,
                          BindingResult bindingResult,
-                         @RequestParam("id") Long id,
-                         @RequestParam(value = "roles", required = false) List<Long> roleIds) {
+                         @RequestParam("id") Long id) {
         if (bindingResult.hasErrors())
             return "edit";
-
-        if (roleIds != null) {
-            List<Role> roles = roleRepository.findAllById(roleIds);
-            user.setRoles(new HashSet<>(roles));
-        }
-
         userService.update(id, user);
         return "redirect:/admin";
     }

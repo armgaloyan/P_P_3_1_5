@@ -36,7 +36,7 @@ public class User implements UserDetails {
     private int age;
     @Column
     private String password;
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Role> roles;
 
     @Override
