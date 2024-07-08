@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.services;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,36 +22,35 @@ public class UserServiceImpl implements UserService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    @Transactional(readOnly = true)
-    public List<User> allUsers() {
-        return userRepository.findAll();
-    }
-    @Transactional(readOnly = true)
-    public User show(Long id) {
-        return userRepository.findById(id).orElse(null);
-    }
-    @Transactional
-    public void save(User user) {
-        Optional<User> userFromDB = Optional.ofNullable(userRepository.findByUsername(user.getUsername()));
-        if (userFromDB.isPresent()) {
-            return;
-        }
+    @Override
+    public void add(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
-    @Transactional
-    public void update(Long id, User updatedUser) {
-        User user = userRepository.findById((id)).orElse(null);
-        if (user == null) {
-            return;
-        }
-        updatedUser.setPassword(bCryptPasswordEncoder.encode(updatedUser.getPassword()));
-        userRepository.save(updatedUser);
-    }
-    @Transactional
-    public void deleteUser(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
-        user.getRoles().clear();
+
+    @Override
+    public void delete(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public void update(User user) {
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+    }
+
+    @Override
+    public List<User> getAll() {
+        return (List<User>) userRepository.findAll();
+    }
+
+    @Override
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 }

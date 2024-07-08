@@ -16,7 +16,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -42,6 +44,14 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
+    }
+    public boolean isAdmin() {
+        for (Role role : roles) {
+            if (Objects.equals(role.getAuthority(), "ROLE_ADMIN")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

@@ -11,7 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -23,7 +23,7 @@ public class Role implements GrantedAuthority {
     @Column
     private String name;
     @ManyToMany(mappedBy = "roles", cascade = CascadeType.ALL)
-    private List<User> users;
+    private Set<User> users;
 
     public Role(String name) {
         this.name = name;
@@ -35,7 +35,7 @@ public class Role implements GrantedAuthority {
 
     @Override
     public String toString() {
-        return "Role - " + name;
+        return name;
     }
 
     @Override
