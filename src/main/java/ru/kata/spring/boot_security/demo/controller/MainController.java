@@ -25,10 +25,9 @@ public class MainController {
         this.rr = rr;
     }
 
-    @GetMapping(value = "/admin")
+    @GetMapping("/admin")
     public String startPageForAdmin(ModelMap model, @AuthenticationPrincipal UserDetails userDetail) {
-        User user = us.findByUsername(userDetail.getUsername());
-        model.addAttribute("curUser", user);
+        model.addAttribute("curUser", us.findByUsername(userDetail.getUsername()));
         model.addAttribute("users", us.getAll());
         model.addAttribute("roles", rr.findAll());
         model.addAttribute("newUser", new User());
@@ -37,8 +36,7 @@ public class MainController {
 
     @GetMapping("/user")
     public String showUserInfo(Model model, Principal principal) {
-        User user = us.findByUsername(principal.getName());
-        model.addAttribute("user", user);
+        model.addAttribute("user", us.findByUsername(principal.getName()));
         return "user";
     }
 
