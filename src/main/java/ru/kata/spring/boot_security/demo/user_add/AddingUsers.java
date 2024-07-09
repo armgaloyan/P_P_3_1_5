@@ -29,7 +29,7 @@ public class AddingUsers {
         user.setUsername("admin");
         user.setAge(20);
         user.setPassword(bCryptPasswordEncoder.encode("admin"));
-        user.setRoles(Collections.singleton((new Role("ROLE_ADMIN"))));
+        user.setRoles(Collections.singleton(new Role("ROLE_ADMIN")));
         userRepository.save(user);
         User user2 = new User();
         user2.setUsername("user");

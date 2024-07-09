@@ -1,5 +1,8 @@
 package ru.kata.spring.boot_security.demo.services;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -8,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.entities.User;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,14 +52,26 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             return;
         }
-//        updatedUser.setPassword(bCryptPasswordEncoder.encode(updatedUser.getPassword()));
+        Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails currentuserDetails = (UserDetails) currentAuth.getPrincipal();
+        if (((User) currentuserDetails).getId().equals(updatedUser.getId())) {
+            Authentication newAuth = new UsernamePasswordAuthenticationToken(
+                    updatedUser,
+                    currentAuth.getCredentials(),
+                    updatedUser.getAuthorities()
+            );
+            SecurityContextHolder.getContext().setAuthentication(newAuth);
+        }
+        if (!updatedUser.getPassword().equals(user.getPassword())) {
+            updatedUser.setPassword(bCryptPasswordEncoder.encode(updatedUser.getPassword()));
+        }
         userRepository.save(updatedUser);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<User> getAll() {
-        return (List<User>) userRepository.findAll();
+        return userRepository.findAll();
     }
 
     @Override
