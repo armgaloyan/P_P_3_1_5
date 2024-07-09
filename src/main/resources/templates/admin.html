@@ -100,7 +100,7 @@
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
                                                     <form th:method="POST"
-                                                          th:action="@{/admin/updateUser}">
+                                                          th:action="@{/admin/updateUser(id=${user.id})}">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title">Edit</h5>
                                                             <button type="button" class="close"
@@ -126,7 +126,7 @@
                                                                     <input type="text"
                                                                            id="username-edit"
                                                                            class="form-control"
-                                                                           th:name="name"
+                                                                           th:name="username"
                                                                            th:value="${user.username}"
                                                                            placeholder="Username">
                                                                 </div>
@@ -172,7 +172,8 @@
                                                                     Close
                                                                 </button>
                                                                 <button type="submit"
-                                                                        class="btn btn-primary">Update
+                                                                        class="btn btn-primary">
+                                                                    Update
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -222,7 +223,7 @@
                                                                            class="form-control"
                                                                            readonly
                                                                            th:name="name"
-                                                                           th:value="${user.name}"
+                                                                           th:value="${user.username}"
                                                                            placeholder="Username">
                                                                 </div>
                                                                 <div class="row mb-4">
