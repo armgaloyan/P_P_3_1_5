@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.entities;
 
 import lombok.Data;
-import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -17,10 +16,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Data
@@ -28,7 +26,7 @@ import java.util.Set;
 public class User implements UserDetails {
     @Id
     @Column
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @NotEmpty(message = "Name should not be empty")
     @Size(min = 2, max = 30, message = "Name should be between 2 and 30 characters")
@@ -40,12 +38,13 @@ public class User implements UserDetails {
     @Column
     private String password;
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<Role> roles;
+    private List<Role> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
     }
+
     public boolean isAdmin() {
         for (Role role : roles) {
             if (Objects.equals(role.getAuthority(), "ROLE_ADMIN")) {
@@ -53,16 +52,6 @@ public class User implements UserDetails {
             }
         }
         return false;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", age=" + age +
-                ", password='" + password + '\'' +
-                '}';
     }
 
     @Override
