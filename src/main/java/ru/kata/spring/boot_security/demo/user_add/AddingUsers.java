@@ -5,9 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.entities.Role;
 import ru.kata.spring.boot_security.demo.entities.User;
-import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
-import ru.kata.spring.boot_security.demo.services.UserService;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -16,14 +14,10 @@ import java.util.List;
 public class AddingUsers {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final UserService service;
-    private final RoleRepository roleRepository;
 
-    public AddingUsers(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, UserService service, RoleRepository roleRepository) {
+    public AddingUsers(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.service = service;
-        this.roleRepository = roleRepository;
     }
 
     @PostConstruct
