@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="icon" href="https://static-00.iconduck.com/assets.00/spring-icon-2048x2045-yufnoc34.png" sizes="32x32" type="image/png">
+    <title>Admin Panel</title>
+</head>
+
+<body>
+
+<header>
+    <nav class="navbar navbar-dark bg-dark sticky-top">
+        <span class="navbar-brand mb-0 h1"><strong>Admin Panel</strong></span>
+        <ul class="navbar-nav px-4">
+            <li class="nav-item text-nowrap">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<div class="container-fluid bg-light rounded">
+    <div class="row">
+        <div class="col-2 mt-3 bg-white rounded">
+            <ul class="nav flex-sm-column">
+                <li class="nav-item">
+                    <a class="nav-link rounded" href="#" id="admin-tab">Admin</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link rounded" href="#" id="user-tab">User</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-10 mt-2">
+            <h1>Admin Panel</h1>
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab" aria-controls="users" aria-selected="true">User table</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="newUser-tab" data-bs-toggle="tab" data-bs-target="#newUser" type="button" role="tab" aria-controls="newUser" aria-selected="false">Add new user</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="users" role="tabpanel" aria-labelledby="users-tab">
+                    <div class="card">
+                        <div class="card-header bg-light mb-3">
+                            <p class="fw-bold h5 mt-1">Users</p>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-striped border-top" id="usersTable">
+                                <thead>
+                                <tr>
+                                    <th scope="col"><strong>Id</strong></th>
+                                    <th scope="col"><strong>Username</strong></th>
+                                    <th scope="col"><strong>Age</strong></th>
+                                    <th scope="col"><strong>Roles</strong></th>
+                                    <th scope="col"><strong>Actions</strong></th>
+                                </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="newUser" role="tabpanel" aria-labelledby="newUser-tab">
+                    <div class="card">
+                        <div class="card-header bg-light mb-3">
+                            <p class="fw-bold h5 mt-1">Add new user</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="container">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-4">
+                                        <form id="addUserForm">
+                                            <div class="mb-3">
+                                                <label for="username" class="form-label">Username</label>
+                                                <input name="username" type="text" class="form-control" id="username" placeholder="Username">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="age" class="form-label">Age</label>
+                                                <input name="age" type="number" class="form-control" id="age" placeholder="Age">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="password" class="form-label">Password</label>
+                                                <input name="password" type="password" class="form-control" id="password" placeholder="Password">
+                                            </div>
+                                            <div>
+                                                <label for="roles" class="form-label">Role</label>
+                                                <select class="form-select" name="roles" size="2" id="roles" multiple>
+                                                    <!-- Options will be filled by JS -->
+                                                </select>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary btn-lg bg-success mt-3">Add new user</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchUsers();
+        fetchRoles();
+        document.getElementById('addUserForm').addEventListener('submit', addUser);
+    });
+
+    function fetchUsers() {
+        fetch('/api/users')
+            .then(response => response.json())
+            .then(data => {
+                const usersTableBody = document.getElementById('usersTableBody');
+                usersTableBody.innerHTML = '';
+                data.forEach(user => {
+                    const userRow = document.createElement('tr');
+                    userRow.innerHTML = `
+                        <td>${user.id}</td>
+                        <td>${user.username}</td>
+                        <td>${user.age}</td>
+                        <td>${user.roles.map(role => role.authority.replace('ROLE_', '')).join(' ')}</td>
+                        <td>
+                            <button type="button" class="btn btn-info" onclick="openEditModal(${user.id})">Edit</button>
+                            <button type="button" class="btn btn-danger" onclick="openDeleteModal(${user.id})">Delete</button>
+                        </td>
+                    `;
+                    usersTableBody.appendChild(userRow);
+                });
+            });
+    }
+
+    function fetchRoles() {
+        fetch('/api/roles')
+            .then(response => response.json())
+            .then(data => {
+                const rolesSelect = document.getElementById('roles');
+                data.forEach(role => {
+                    const option = document.createElement('option');
+                    option.value = role.id;
+                    option.text = role.authority.replace('ROLE_', '');
+                    rolesSelect.appendChild(option);
+                });
+            });
+    }
+
+    function addUser(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const user = {
+            username: formData.get('username'),
+            age: formData.get('age'),
+            password: formData.get('password'),
+            roles: Array.from(event.target.roles.selectedOptions).map(option => ({ id: option.value }))
+        };
+
+        fetch('/api/users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        })
+            .then(response => response.json())
+            .then(data => {
+                fetchUsers();
+                $('#addUserModal').modal('hide');
+                event.target.reset();
+            });
+    }
+
+    function openEditModal(userId) {
+        fetch(`/api/users/${userId}`)
+            .then(response => response.json())
+            .then(user => {
+                // Fill the modal with user data
+                // Show the modal
+            });
+    }
+
+    function openDeleteModal(userId) {
+        // Fill the modal with user data
+        // Show the modal
+    }
+
+    function editUser(userId) {
+        // Send a PUT request to update the user
+    }
+
+    function deleteUser(userId) {
+        fetch(`/api/users/${userId}`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (response.ok) {
+                    fetchUsers();
+                }
+            });
+    }
+</script>
+
+</body>
+</html>

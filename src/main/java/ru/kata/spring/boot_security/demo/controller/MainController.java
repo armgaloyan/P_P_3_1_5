@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.kata.spring.boot_security.demo.entities.User;
-import ru.kata.spring.boot_security.demo.services.RoleService;
+import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.services.UserService;
 
 import javax.validation.Valid;
@@ -17,18 +17,18 @@ import java.security.Principal;
 @Controller
 public class MainController {
     private final UserService userService;
-    private final RoleService roleService;
+    private final RoleRepository roleRepository;
 
-    public MainController(UserService userService, RoleService roleService) {
+    public MainController(UserService userService, RoleRepository roleRepository) {
         this.userService = userService;
-        this.roleService = roleService;
+        this.roleRepository = roleRepository;
     }
 
     @GetMapping("/admin")
     public String startPageForAdmin(ModelMap model, Principal principal) {
         model.addAttribute("curUser", userService.findByUsername(principal.getName()));
         model.addAttribute("users", userService.getAll());
-        model.addAttribute("roles", roleService.findAll());
+        model.addAttribute("roles", roleRepository.findAll());
         model.addAttribute("newUser", new User());
         return "admin";
     }
