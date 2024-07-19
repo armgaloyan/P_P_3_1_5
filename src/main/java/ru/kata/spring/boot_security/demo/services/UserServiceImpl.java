@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void delete(Long id) {
+    public void delete(int id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         user.getRoles().clear();
         userRepository.deleteById(id);
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
         }
         Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
         UserDetails currentuserDetails = (UserDetails) currentAuth.getPrincipal();
-        if (((User) currentuserDetails).getId().equals(updatedUser.getId())) {
+        if (((User) currentuserDetails).getId() == (updatedUser.getId())) {
             Authentication newAuth = new UsernamePasswordAuthenticationToken(
                     updatedUser,
                     currentAuth.getCredentials(),
@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public User getUserById(Long id) {
+    public User getUserById(int id) {
         return userRepository.findById(id).orElse(null);
     }
 
@@ -84,8 +84,4 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username);
     }
 
-    @Override
-    public User getCurrentUser() {
-        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    }
 }
